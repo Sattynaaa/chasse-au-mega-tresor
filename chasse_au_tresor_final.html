@@ -92,7 +92,7 @@ const app = document.getElementById("app");
 
 function errorMsg() {
   const msgs = [
-    "eh nous bebou c’est pas ça",
+    "eh non bébou c’est pas ça",
     "déso essaie encore",
     "presque… mais non"
   ];
@@ -111,7 +111,7 @@ function loadStep() {
       <p>
         Bienvenue dans notre nouveau jeu.<br>
         Le but de l’exercice est de passer d’étape en étape
-        pour découvrir différents éléments.
+        pour y découvrir les différents éléments.
       </p>
       <p>
         Pour commencer, chaque phrase correspond à un mot précis.
@@ -146,7 +146,7 @@ function loadStep() {
       "Temps qui s’arrête",
       "Arrêt en cancer",
       "Cancer = préventive palpation",
-      "Palpations paradisiaques"
+      "Futures palpations paradisiaques"
     ];
     render(`
       <h2>${titles[step-1]}</h2>
@@ -159,7 +159,7 @@ function loadStep() {
 
   else if(step === 6) {
     render(`
-      <h2>Bravo mon amour 💖</h2>
+      <h2>Bravo ma vahiné 💖</h2>
       <p>Tu es allé jusqu’au bout.</p>
       <a href="${SPOTIFY_LINK}" target="_blank" class="playlist">
         <img src="https://i.imgur.com/Z7AzH2c.png">

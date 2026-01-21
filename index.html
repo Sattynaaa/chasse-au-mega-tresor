@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Notre jeu 💖</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(120deg,#ffdee9,#b5fffc);
+  margin:0;
+  padding:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+}
+.container {
+  background:white;
+  padding:30px;
+  border-radius:15px;
+  width:90%;
+  max-width:520px;
+  text-align:center;
+  box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+input {
+  padding:10px;
+  width:80%;
+  font-size:16px;
+  margin-top:10px;
+}
+button {
+  margin-top:10px;
+  padding:8px 20px;
+  font-size:15px;
+  border:none;
+  border-radius:8px;
+  background:#ff5f8f;
+  color:white;
+  cursor:pointer;
+}
+.error {
+  margin-top:10px;
+  color:#ff5f8f;
+}
+.success {
+  margin-top:10px;
+  color:green;
+}
+.hidden { display:none; }
+#fireworks {
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:-1;
+}
+.playlist img {
+  width:250px;
+  margin-top:25px;
+  border-radius:15px;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="fireworks" class="hidden"></canvas>
+<div class="container" id="app"></div>
+
+<script>
+/* ===== CONFIGURATION ===== */
+
+const LETTERS = ["g", "p", "s"];
+
+const answers = [
+  "48.8898056, 2.3833630",
+  "44.8942061, 1.4795165",
+  "15.9235421, -61.2571513",
+  "41.3874374, 2.1686496",
+  "-17.6509195, -149.4260421"
+];
+
+const SPOTIFY_LINK = "https://open.spotify.com/playlist/6BtdNXBrYW0Nw1HItsNzdi?si=6wOjiwczQWGj8chKD_Hpbw&pi=rWccxJn4RQ6t-";
+
+/* ===== ÉTAT ===== */
+
+let step = 0;
+let found = [false, false, false];
+const app = document.getElementById("app");
+
+function errorMsg() {
+  const msgs = [
+    "eh non bébou c’est pas ça",
+    "déso essaie encore",
+    "presque… mais non"
+  ];
+  return msgs[Math.floor(Math.random()*msgs.length)];
+}
+
+function render(html) {
+  app.innerHTML = html;
+}
+
+function loadStep() {
+
+  if(step === 0) {
+    render(`
+      <h2>Bienvenue 💖</h2>
+      <p>
+        Bienvenue dans notre nouveau jeu.<br>
+        Le but de l’exercice est de passer d’étape en étape
+        pour y découvrir les différents éléments.
+      </p>
+      <p>
+        Pour commencer, chaque phrase correspond à un mot précis.
+        Entre simplement <b>la première lettre</b> de ce mot.
+      </p>
+
+      <p><b>Lubrification du métal du sabre</b></p>
+      <input id="l1" placeholder="Réponse">
+      <button onclick="checkLetter(0)">Valider</button>
+      <div id="e1" class="error"></div>
+
+      <p><b>La doubler pour plus de kiff</b></p>
+      <input id="l2" placeholder="Réponse">
+      <button onclick="checkLetter(1)">Valider</button>
+      <div id="e2" class="error"></div>
+
+      <p><b>Tu m’y as fait prendre goût, toi seul y aura droit</b></p>
+      <input id="l3" placeholder="Réponse">
+      <button onclick="checkLetter(2)">Valider</button>
+      <div id="e3" class="error"></div>
+
+      <div id="final" class="hidden">
+        <p class="success">Parfait… la suite s’ouvre ✨</p>
+        <button onclick="step=1; loadStep()">Continuer</button>
+      </div>
+    `);
+  }
+
+  else if(step >= 1 && step <= 5) {
+    const titles = [
+      "Faille dans le temps",
+      "Temps qui s’arrête",
+      "Arrêt en cancer",
+      "Cancer = préventive palpation",
+      "Futures palpations paradisiaques"
+    ];
+    render(`
+      <h2>${titles[step-1]}</h2>
+      <p>Entre ce que tu as trouvé.</p>
+      <input id="value" placeholder="Réponse">
+      <button onclick="checkValue()">Valider</button>
+      <div id="error" class="error"></div>
+    `);
+  }
+
+  else if(step === 6) {
+    render(`
+      <h2>Bravo ma vahiné 💖</h2>
+      <p>Tu es allé jusqu’au bout.</p>
+      <a href="${SPOTIFY_LINK}" target="_blank" class="playlist">
+        <img src="https://i.imgur.com/Z7AzH2c.png">
+      </a>
+    `);
+    startFireworks();
+  }
+}
+
+function checkLetter(index) {
+  const value = document.getElementById("l"+(index+1)).value.trim().toLowerCase();
+  if(value === LETTERS[index]) {
+    found[index] = true;
+    document.getElementById("e"+(index+1)).innerHTML = "<span class='success'>✔</span>";
+  } else {
+    document.getElementById("e"+(index+1)).innerText = errorMsg();
+  }
+  if(found.every(v => v)) {
+    document.getElementById("final").classList.remove("hidden");
+  }
+}
+
+function checkValue() {
+  const value = document.getElementById("value").value.trim();
+  if(value === answers[step-1]) {
+    step++;
+    loadStep();
+  } else {
+    document.getElementById("error").innerText = errorMsg();
+  }
+}
+
+loadStep();
+
+/* ===== FEU D’ARTIFICE ===== */
+function startFireworks() {
+  const canvas = document.getElementById("fireworks");
+  canvas.classList.remove("hidden");
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  let particles = [];
+
+  function boom() {
+    const x = Math.random()*canvas.width;
+    const y = Math.random()*canvas.height/2;
+    for(let i=0;i<60;i++) {
+      particles.push({
+        x,y,
+        vx:(Math.random()-0.5)*6,
+        vy:(Math.random()-0.5)*6,
+        life:80
+      });
+    }
+  }
+
+  function animate() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles.forEach(p => {
+      ctx.fillRect(p.x, p.y, 3, 3);
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life--;
+    });
+    particles = particles.filter(p => p.life > 0);
+    requestAnimationFrame(animate);
+  }
+
+  setInterval(boom, 700);
+  animate();
+}
+</script>
+
+</body>
+</html>
+
